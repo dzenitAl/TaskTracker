@@ -1,2 +1,2 @@
 # TaskTracker
-Web API for entering project data into the database
+Web API for entering project data into the database.
