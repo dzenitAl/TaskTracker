@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAccessLayer.EF;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
+using AutoMapper;
 
 namespace Web_API
 {
@@ -39,6 +41,12 @@ namespace Web_API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskTracker", Version = "v1" });
             });
+
+            services.AddTransient<IProjectRepository, ProjectRepository>();
+
+            services.AddAutoMapper(typeof(Startup));
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,8 +71,7 @@ namespace Web_API
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskTracker");
-                c.RoutePrefix = string.Empty;
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskTracker v1");
             });
 
         }
