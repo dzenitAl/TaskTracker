@@ -16,6 +16,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
+using BusinessLogicLayer.Interfaces;
+using BusinessLogicLayer.Services;
+using BusinessLogicLayer.Profiles;
 
 namespace Web_API
 {
@@ -43,8 +46,11 @@ namespace Web_API
             });
 
             services.AddTransient<IProjectRepository, ProjectRepository>();
+            services.AddTransient<IProjectTaskRepository, ProjectTaskRepository>();
+            services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<IProjectTaskService, ProjectTaskService>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(TaskTrackerProfiles));
 
             
         }

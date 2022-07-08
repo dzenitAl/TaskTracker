@@ -9,10 +9,10 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface IProjectService
     {
-        Task<Project> AddProject(Project project);
-        Task<Project> GetProject(int projectId);
-        Task<IEnumerable<Project>> GetAllProjects();
-        Task<Project> UpdateProject(Project project);
-        Task<Project> DeleteProject(int projectId);
+        Task<Project> AddProjectAsync(Project project);
+        Task<Project> GetProjectAsync(int projectId);
+        Task<IEnumerable<Project>> GetAllProjectsAsync();
+        Task UpdateProjectAsync(int projectId, Project project);
+        Task DeleteProjectAsync(int projectId);
     }
 }

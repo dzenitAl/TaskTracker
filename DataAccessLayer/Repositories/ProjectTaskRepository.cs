@@ -18,33 +18,36 @@ namespace DataAccessLayer.Repositories
             _context = context;
         }
 
-        public async Task<ProjectTaskDto> AddProjectTask(ProjectTaskDto projectTask)
+        public async Task<ProjectTaskDto> AddProjectTaskAsync(ProjectTaskDto projectTask)
         {
             await _context.ProjectTasks.AddAsync(projectTask);
+
             await _context.SaveChangesAsync();
             return projectTask;
         }
 
-        public async Task<ProjectTaskDto> GetProjectTask(int ProjectTaskId)
+        public async Task<ProjectTaskDto> GetProjectTaskAsync(int projectTaskId)
         {
-            return await _context.ProjectTasks.FindAsync(ProjectTaskId);
+            return await _context.ProjectTasks.FindAsync(projectTaskId);
         }
 
-        public async Task<IEnumerable<ProjectTaskDto>> GetAllProjectTasks()
+        public async Task<IEnumerable<ProjectTaskDto>> GetAllProjectTasksAsync()
         {
             return await _context.ProjectTasks.ToListAsync();
         }
 
-        public async Task<ProjectTaskDto> DeleteProjectTask(ProjectTaskDto projectTask)
+        public async Task DeleteProjectTaskAsync(int projectTaskId)
         {
-            _context.ProjectTasks.Remove(projectTask);
+            var existingProjectTask = await _context.ProjectTasks.FindAsync(projectTaskId);
+
+            _context.ProjectTasks.Remove(existingProjectTask);
+
             await _context.SaveChangesAsync();
-            return projectTask;
         }
 
-        public async Task<ProjectTaskDto> UpdateProjectTask(ProjectTaskDto projectTask)
+        public async Task UpdateProjectTaskAsync(int projectTaskId, ProjectTaskDto projectTask)
         {
-            var existingProjectTask = await _context.ProjectTasks.FindAsync(projectTask.Id);
+            var existingProjectTask = await _context.ProjectTasks.FindAsync(projectTaskId);
 
             existingProjectTask.Name = projectTask.Name;
             existingProjectTask.Description = projectTask.Description;
@@ -54,14 +57,7 @@ namespace DataAccessLayer.Repositories
             existingProjectTask.ProjectId = projectTask.ProjectId;
 
             await _context.SaveChangesAsync();
-            return projectTask;
-        }
-
-        public async Task<ProjectDto> GetProject(int projectId)
-        {
-            var expectedProject = await _context.Projects.FindAsync(projectId);
-            return expectedProject;
-        }
-
+        } 
+        
     }
 }

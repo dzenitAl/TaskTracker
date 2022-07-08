@@ -8,11 +8,10 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface IProjectTaskService
     {
-        Task<ProjectTask> AddProjectTask(ProjectTask projectTask);
-        Task<ProjectTask> GetProjectTask(int ProjectTaskId);
-        Task<IEnumerable<ProjectTask>> GetAllProjectTasks();
-        Task<ProjectTask> UpdateProjectTask(ProjectTask projectTask);
-        Task<ProjectTask> DeleteProjectTask(int projectTaskId);
-        Task<Project> GetProject(int projectId);
+        Task<ProjectTask> AddProjectTaskAsync(ProjectTask projectTask);
+        Task<ProjectTask> GetProjectTaskAsync(int projectTaskId);
+        Task<IEnumerable<ProjectTask>> GetAllProjectTasksAsync();
+        Task UpdateProjectTaskAsync(int projectTaskId, ProjectTask projectTask);
+        Task DeleteProjectTaskAsync(int projectTaskId);
     }
 }

@@ -18,34 +18,37 @@ namespace DataAccessLayer.Repositories
             _context = context;
         }
 
-        public async Task<ProjectDto> AddProject(ProjectDto project)
+        public async Task<ProjectDto> AddProjectAsync(ProjectDto project)
         {
             await _context.Projects.AddAsync(project);
+
             await _context.SaveChangesAsync();
             return project;
         }
 
-        public async Task<ProjectDto> GetProject(int projectId)
+        public async Task<ProjectDto> GetProjectAsync(int projectId)
         {
             return await _context.Projects.FindAsync(projectId);
         }
 
-        public async Task<IEnumerable<ProjectDto>> GetAllProjects()
+        public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync()
         {
             return await _context.Projects.ToListAsync();
         }
 
-        public async Task<ProjectDto> DeleteProject(ProjectDto project)
+        public async Task DeleteProjectAsync(int projectId)
         {
-            _context.Projects.Remove(project);
+            var existingProject = await _context.Projects.FindAsync(projectId);
+
+            _context.Projects.Remove(existingProject);
+
             await _context.SaveChangesAsync();
-            return project;
         }
 
-        public async Task<ProjectDto> UpdateProject(ProjectDto project)
+        public async Task UpdateProjectAsync(int projectId, ProjectDto project)
         {
-            var existingProject = await _context.Projects.FindAsync(project.Id);
-
+            var existingProject = await _context.Projects.FindAsync(projectId);
+          
             existingProject.Name = project.Name;
             existingProject.StartDate = project.StartDate;
             existingProject.CompletionDate = project.CompletionDate;
@@ -53,7 +56,6 @@ namespace DataAccessLayer.Repositories
             existingProject.Status = project.Status;
 
             await _context.SaveChangesAsync();
-            return project;
         }
 
     }

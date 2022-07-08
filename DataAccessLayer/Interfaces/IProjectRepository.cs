@@ -8,10 +8,10 @@ namespace DataAccessLayer.Interfaces
 {
     public interface IProjectRepository
     {
-        Task<ProjectDto> AddProject(ProjectDto project);
-        Task<ProjectDto> GetProject(int projectId);
-        Task<IEnumerable<ProjectDto>> GetAllProjects();
-        Task<ProjectDto> UpdateProject(ProjectDto project);
-        Task<ProjectDto> DeleteProject(ProjectDto project);
+        Task<ProjectDto> AddProjectAsync(ProjectDto project);
+        Task<ProjectDto> GetProjectAsync(int projectId);
+        Task<IEnumerable<ProjectDto>> GetAllProjectsAsync();
+        Task UpdateProjectAsync(int projectId, ProjectDto project);
+        Task DeleteProjectAsync(int projectId);
     }
 }

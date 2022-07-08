@@ -13,57 +13,55 @@ namespace BusinessLogicLayer.Services
 {
     public class ProjectTaskService : IProjectTaskService
     {
-        private readonly TaskTrackerDbContext _context;
         private readonly IProjectTaskRepository _projectTaskRepository;
-        protected readonly IMapper _mapper;
-        public ProjectTaskService(TaskTrackerDbContext context, IProjectTaskRepository projectTaskRepository, IMapper mapper)
+        private readonly IProjectRepository _projectRepository;
+        private readonly IMapper _mapper;
+
+        public ProjectTaskService(IProjectTaskRepository projectTaskRepository, IProjectRepository projectRepository, IMapper mapper)
         {
-            _context = context;
             _projectTaskRepository = projectTaskRepository;
+            _projectRepository = projectRepository;
             _mapper = mapper;
         }
 
-        public async Task<ProjectTask> AddProjectTask(ProjectTask projectTask)
+        public async Task<ProjectTask> AddProjectTaskAsync(ProjectTask projectTask)
         {
             var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
-            await _projectTaskRepository.AddProjectTask(newProjectTask);
-            await _context.SaveChangesAsync();
+            await _projectTaskRepository.AddProjectTaskAsync(newProjectTask);
 
             return _mapper.Map<ProjectTask>(newProjectTask);
         }
 
-        public async Task<ProjectTask> GetProjectTask(int ProjectTaskId)
+        public async Task<ProjectTask> GetProjectTaskAsync(int projectTaskId)
         {
-            var expectedProjectTask = await _projectTaskRepository.GetProjectTask(ProjectTaskId);
+            var expectedProjectTask = await _projectTaskRepository.GetProjectTaskAsync(projectTaskId);
             return _mapper.Map<ProjectTask>(expectedProjectTask);
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetAllProjectTasks()
+        public async Task<IEnumerable<ProjectTask>> GetAllProjectTasksAsync()
         {
-            var allProjectTasks = await _projectTaskRepository.GetAllProjectTasks();
-            return (IEnumerable<ProjectTask>)_mapper.Map<ProjectTask>(allProjectTasks);
+            var allProjectTasks = await _projectTaskRepository.GetAllProjectTasksAsync();
+            var projectTasks = new List<ProjectTask>();
+
+            foreach (var projectTask in allProjectTasks)
+            {
+                projectTasks.Add(_mapper.Map<ProjectTask>(projectTask));
+            }
+            return projectTasks;
         }
 
-        public async Task<ProjectTask> UpdateProjectTask(ProjectTask projectTask)
+        public async Task UpdateProjectTaskAsync(int projectTaskId, ProjectTask projectTask)
         {
-            var existingProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
+            var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
-            return _mapper.Map<ProjectTask>(await _projectTaskRepository.UpdateProjectTask(existingProjectTask));
-        }
-        public async Task<ProjectTask> DeleteProjectTask(int projectTaskId)
-        {
-            var expectedProjectTask = await _projectTaskRepository.GetProjectTask(projectTaskId);
-
-            await _projectTaskRepository.DeleteProjectTask(expectedProjectTask);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<ProjectTask>(expectedProjectTask);
+            _mapper.Map<ProjectTask>( _projectTaskRepository.UpdateProjectTaskAsync(projectTaskId, newProjectTask)); 
         }
 
-        public async Task<Project> GetProject(int projectId)
+        public async Task DeleteProjectTaskAsync(int projectTaskId)
         {
-            var expectedProject = await _projectTaskRepository.GetProject(projectId);
-            return _mapper.Map<Project>(expectedProject);
+            await _projectTaskRepository.DeleteProjectTaskAsync(projectTaskId);
         }
+
     }
 }
