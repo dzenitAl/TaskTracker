@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.Entities;
 using BusinessLogicLayer.Interfaces;
+using BusinessLogicLayer.Models;
 using DataAccessLayer.EF;
 using DataAccessLayer.Interfaces;
 using DataAccessLayer.Models;
@@ -18,12 +19,14 @@ namespace BusinessLogicLayer.Services
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectTaskRepository _projectTaskRepository; 
         private readonly IMapper _mapper;
+        private readonly TaskTrackerDbContext _context;
 
-        public ProjectService(IProjectRepository projectRepository, IProjectTaskRepository projectTaskRepository, IMapper mapper)
+        public ProjectService(IProjectRepository projectRepository, IProjectTaskRepository projectTaskRepository, IMapper mapper, TaskTrackerDbContext context)
         {
             _projectRepository = projectRepository;
             _projectTaskRepository = projectTaskRepository;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<Project>AddProjectAsync(Project project)
@@ -56,7 +59,7 @@ namespace BusinessLogicLayer.Services
         {
             var newProject = _mapper.Map<ProjectDto>(project);
             
-            _mapper.Map<ProjectDto>(_projectRepository.UpdateProjectAsync(projectId, newProject));
+            await _projectRepository.UpdateProjectAsync(projectId, newProject);
         }
 
         public async Task DeleteProjectAsync(int projectId)
@@ -64,5 +67,55 @@ namespace BusinessLogicLayer.Services
             await _projectRepository.DeleteProjectAsync(projectId);
         }
 
+        public IEnumerable<Project> GetFilter(ProjectFilters search = null)
+        {
+            var entity = _context.Projects.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Name))
+            {
+                entity = entity.Where(x => x.Name.Contains(search.Name));
+            }
+
+            if (search.StartDate.HasValue)
+            {
+                entity = entity.Where(x => x.StartDate.Value == search.StartDate.Value);
+            }
+
+            if (search.CompletionDate.HasValue)
+            {
+                entity = entity.Where(x => x.CompletionDate == search.StartDate);
+            }
+
+            if (search.Priority.HasValue)
+            {
+                entity = entity.Where(x => x.Priority >= search.Priority);
+            }
+
+
+            var filterList = new List<Project>();
+
+            foreach (var project in entity)
+            {
+                filterList.Add(_mapper.Map<Project>(project));
+            }
+            return filterList;
+        }
+
+        public async Task DeleteProjectTaskAsync(int projectTaskId)
+        {
+            await _projectTaskRepository.DeleteProjectTaskAsync(projectTaskId);
+        }
+
+        public async Task<ProjectTaskDto> GetProjectTaskAsync(int projectTaskId)
+        {
+            return await _context.ProjectTasks.FindAsync(projectTaskId);
+        }
+        public async Task<ProjectTaskDto> AddProjectTaskAsync(ProjectTaskDto projectTask)
+        {
+            await _context.ProjectTasks.AddAsync(projectTask);
+
+            await _context.SaveChangesAsync();
+            return projectTask;
+        }
     }
 }

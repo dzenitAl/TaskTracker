@@ -1,8 +1,6 @@
-﻿
-using BusinessLogicLayer.Entities;
-using System;
+﻿using BusinessLogicLayer.Entities;
+using BusinessLogicLayer.Models;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Interfaces
@@ -14,5 +12,6 @@ namespace BusinessLogicLayer.Interfaces
         Task<IEnumerable<Project>> GetAllProjectsAsync();
         Task UpdateProjectAsync(int projectId, Project project);
         Task DeleteProjectAsync(int projectId);
+        IEnumerable<Project> GetFilter(ProjectFilters search = null);
     }
 }

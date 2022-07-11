@@ -55,7 +55,7 @@ namespace BusinessLogicLayer.Services
         {
             var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
-            _mapper.Map<ProjectTask>( _projectTaskRepository.UpdateProjectTaskAsync(projectTaskId, newProjectTask)); 
+            await _projectTaskRepository.UpdateProjectTaskAsync(projectTaskId, newProjectTask);
         }
 
         public async Task DeleteProjectTaskAsync(int projectTaskId)

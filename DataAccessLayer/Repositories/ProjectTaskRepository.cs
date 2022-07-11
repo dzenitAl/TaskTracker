@@ -54,7 +54,6 @@ namespace DataAccessLayer.Repositories
             existingProjectTask.Status = projectTask.Status;
             existingProjectTask.Priority = projectTask.Priority;
             existingProjectTask.Status = projectTask.Status;
-            existingProjectTask.ProjectId = projectTask.ProjectId;
 
             await _context.SaveChangesAsync();
         } 
