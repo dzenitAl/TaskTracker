@@ -14,18 +14,19 @@ namespace BusinessLogicLayer.Services
     public class ProjectTaskService : IProjectTaskService
     {
         private readonly IProjectTaskRepository _projectTaskRepository;
-        private readonly IProjectRepository _projectRepository;
         private readonly IMapper _mapper;
 
-        public ProjectTaskService(IProjectTaskRepository projectTaskRepository, IProjectRepository projectRepository, IMapper mapper)
+        public ProjectTaskService(IProjectTaskRepository projectTaskRepository, IMapper mapper)
         {
             _projectTaskRepository = projectTaskRepository;
-            _projectRepository = projectRepository;
             _mapper = mapper;
         }
 
         public async Task<ProjectTask> AddProjectTaskAsync(ProjectTask projectTask)
         {
+            if (projectTask == null)
+                throw new Exception("Project task not found!");
+
             var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
             await _projectTaskRepository.AddProjectTaskAsync(newProjectTask);
@@ -36,7 +37,11 @@ namespace BusinessLogicLayer.Services
         public async Task<ProjectTask> GetProjectTaskAsync(int projectTaskId)
         {
             var expectedProjectTask = await _projectTaskRepository.GetProjectTaskAsync(projectTaskId);
-            return _mapper.Map<ProjectTask>(expectedProjectTask);
+           
+            if(expectedProjectTask != null)
+                return _mapper.Map<ProjectTask>(expectedProjectTask);
+            else
+                throw new Exception($"Project task with Id: {projectTaskId} not found!");
         }
 
         public async Task<IEnumerable<ProjectTask>> GetAllProjectTasksAsync()
@@ -53,6 +58,9 @@ namespace BusinessLogicLayer.Services
 
         public async Task UpdateProjectTaskAsync(int projectTaskId, ProjectTask projectTask)
         {
+            if (projectTask == null)
+                throw new Exception("Project task not found!");
+
             var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
             await _projectTaskRepository.UpdateProjectTaskAsync(projectTaskId, newProjectTask);
@@ -60,6 +68,10 @@ namespace BusinessLogicLayer.Services
 
         public async Task DeleteProjectTaskAsync(int projectTaskId)
         {
+            var projectTask = await GetProjectTaskAsync(projectTaskId);
+            if(projectTask == null)
+                throw new Exception("Project task not found!");
+
             await _projectTaskRepository.DeleteProjectTaskAsync(projectTaskId);
         }
 

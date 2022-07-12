@@ -24,11 +24,11 @@ namespace DataAccessLayer.EF
                 .IsRequired();
 
             modelBuilder.Entity<ProjectTaskDto>()
-            .HasOne<ProjectDto>(p => p.Project)
+            .HasOne(p => p.Project)
             .WithMany()
             .HasForeignKey(s => s.ProjectId)
-            .OnDelete(DeleteBehavior.Cascade)
-            .IsRequired();
+            .OnDelete(DeleteBehavior.Cascade);
+
         }
 
     }

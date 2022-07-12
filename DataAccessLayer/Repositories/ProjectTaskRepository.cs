@@ -48,14 +48,18 @@ namespace DataAccessLayer.Repositories
         public async Task UpdateProjectTaskAsync(int projectTaskId, ProjectTaskDto projectTask)
         {
             var existingProjectTask = await _context.ProjectTasks.FindAsync(projectTaskId);
+            if(existingProjectTask != null)
+            {
+                existingProjectTask.Name = projectTask.Name;
+                existingProjectTask.Description = projectTask.Description;
+                existingProjectTask.Status = projectTask.Status;
+                existingProjectTask.Priority = projectTask.Priority;
+                existingProjectTask.Status = projectTask.Status;
 
-            existingProjectTask.Name = projectTask.Name;
-            existingProjectTask.Description = projectTask.Description;
-            existingProjectTask.Status = projectTask.Status;
-            existingProjectTask.Priority = projectTask.Priority;
-            existingProjectTask.Status = projectTask.Status;
-
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            else
+                throw new Exception($"Project task with Id: {projectTaskId} doesn't exist!");
         } 
         
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DataAccessLayer.Models
@@ -15,6 +16,7 @@ namespace DataAccessLayer.Models
         public TaskStatus Status { get; set; }
         public int Priority { get; set; }
         public int ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
         public ProjectDto Project { get; set; }
     }
 }

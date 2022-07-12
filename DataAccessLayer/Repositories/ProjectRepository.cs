@@ -48,14 +48,52 @@ namespace DataAccessLayer.Repositories
         public async Task UpdateProjectAsync(int projectId, ProjectDto project)
         {
             var existingProject = await _context.Projects.FindAsync(projectId);
-          
-            existingProject.Name = project.Name;
-            existingProject.StartDate = project.StartDate;
-            existingProject.CompletionDate = project.CompletionDate;
-            existingProject.Priority = project.Priority;
-            existingProject.Status = project.Status;
+            if (existingProject != null)
+            {
+                existingProject.Name = project.Name;
+                existingProject.StartDate = project.StartDate;
+                existingProject.CompletionDate = project.CompletionDate;
+                existingProject.Priority = project.Priority;
+                existingProject.Status = project.Status;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            else
+                throw new Exception($"Project with Id: {projectId} doesn't exist!");
+        }
+
+        public IEnumerable<ProjectDto> GetFilter(ProjectFilters search = null)
+        {
+            var entity = _context.Projects.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Name))
+            {
+                entity = entity.Where(x => x.Name.Contains(search.Name));
+            }
+
+            if (search.StartDate.HasValue)
+            {
+                entity = entity.Where(x => x.StartDate.Value == search.StartDate.Value);
+            }
+
+            if (search.CompletionDate.HasValue)
+            {
+                entity = entity.Where(x => x.CompletionDate == search.StartDate);
+            }
+
+            if (search.Priority.HasValue)
+            {
+                entity = entity.Where(x => x.Priority >= search.Priority);
+            }
+
+
+            var filterList = new List<ProjectDto>();
+
+            foreach (var project in entity)
+            {
+                filterList.Add(project);
+            }
+            return filterList;
         }
     }
 }

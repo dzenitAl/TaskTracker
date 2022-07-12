@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace BusinessLogicLayer.Models
+namespace DataAccessLayer.Models
 {
     public class ProjectFilters
     {

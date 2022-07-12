@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer.Entities;
-using BusinessLogicLayer.Models;
+using DataAccessLayer.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,8 +1,6 @@
 ﻿using DataAccessLayer.Enums;
 using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BusinessLogicLayer.Entities
 {
@@ -13,6 +11,7 @@ namespace BusinessLogicLayer.Entities
         public TaskStatus Status { get; set; }
         public int Priority { get; set; }
         public int ProjectId { get; set; }
+        [JsonIgnore]
         public ProjectDto Project { get; set; }
     }
 }

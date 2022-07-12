@@ -14,11 +14,9 @@ namespace Web_API.Controllers
     public class ProjectTaskController : ControllerBase
     {
         private readonly IProjectTaskService _projectTaskService;
-        private readonly IProjectService _projectService;
-        public ProjectTaskController(IProjectTaskService projectTaskService, IProjectService projectService)
+        public ProjectTaskController(IProjectTaskService projectTaskService)
         {
             _projectTaskService = projectTaskService;
-            _projectService = projectService;
         }
 
         [HttpGet("GetAll")]
@@ -28,9 +26,9 @@ namespace Web_API.Controllers
             {
                 return Ok(await _projectTaskService.GetAllProjectTasksAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -39,16 +37,11 @@ namespace Web_API.Controllers
         {
             try
             {
-                var expectedProjectTask = await _projectTaskService.GetProjectTaskAsync(id);
-
-                if(expectedProjectTask == null)
-                    return NotFound($"Project task with Id: {id} was not found!");
-
-                return Ok(expectedProjectTask);
+                return await _projectTaskService.GetProjectTaskAsync(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -57,56 +50,39 @@ namespace Web_API.Controllers
         {
             try
             {
-                if (projectTask == null)
-                    return NotFound("Project task was not found!");
-
-                var project = _projectService.GetProjectAsync(projectTask.ProjectId);
-                if (project == null)
-                {
-                    return NotFound($"Project with Id = {projectTask.ProjectId} not found!");
-                }
-
-                var newProjectTask = await _projectTaskService.AddProjectTaskAsync(projectTask);
-
-                return newProjectTask;
+                return await _projectTaskService.AddProjectTaskAsync(projectTask);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error has occurred!");
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task DeleteProjectTaskAsync(int id)
+        public async Task<ActionResult> DeleteProjectTaskAsync(int id)
         {
             try
             {
-                var requestingProjectTask = await _projectTaskService.GetProjectTaskAsync(id);
-                if (requestingProjectTask == null)
-                {
-                    NotFound("Project task cannot be found!");
-                }
                 await _projectTaskService.DeleteProjectTaskAsync(id);
+                return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                StatusCode(500, "An error has occurred!");
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut("Update/{id}")]
-        public async Task UpdateProjectTaskAsxnc(int id, ProjectTask projectTask)
+        public async Task<ActionResult> UpdateProjectTaskAsxnc(int id, ProjectTask projectTask)
         {
             try
             {
-                if (projectTask == null)
-                    NotFound("Project task was not found!");
-
                 await _projectTaskService.UpdateProjectTaskAsync(id, projectTask);
+                return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                BadRequest();
+                return StatusCode(500, ex.Message);
             }
         }
 
