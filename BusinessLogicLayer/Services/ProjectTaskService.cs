@@ -6,6 +6,7 @@ using DataAccessLayer.Interfaces;
 using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,7 +54,10 @@ namespace BusinessLogicLayer.Services
             {
                 projectTasks.Add(_mapper.Map<ProjectTask>(projectTask));
             }
-            return projectTasks;
+            if (projectTasks.Count() > 0)
+                return projectTasks;
+            else
+                throw new Exception("No Project Tasks in the database!");
         }
 
         public async Task UpdateProjectTaskAsync(int projectTaskId, ProjectTask projectTask)
@@ -74,6 +78,5 @@ namespace BusinessLogicLayer.Services
 
             await _projectTaskRepository.DeleteProjectTaskAsync(projectTaskId);
         }
-
     }
 }

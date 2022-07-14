@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BusinessLogicLayer.Entities;
 using BusinessLogicLayer.Interfaces;
@@ -92,6 +93,20 @@ namespace Web_API.Controllers
             try
             {
                 return Ok( _projectService.GetFilter(search));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("GetTasksOfProject/{id}")]
+
+        public async Task<ActionResult<IEnumerable<ProjectTask>>> GetTasksOfProjectAsync(int id)
+        {
+            try
+            {
+                return Ok(await _projectService.GetTasksOfProjectAsync(id));
             }
             catch (Exception ex)
             {

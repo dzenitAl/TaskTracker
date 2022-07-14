@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+using System.Text;
 
 namespace BusinessLogicLayer.Entities
 {
-    public class Project
+    public class ProjectVM
     {
         public string Name { get; set; }
         [DataType(DataType.Date)]
@@ -15,5 +15,6 @@ namespace BusinessLogicLayer.Entities
         public DateTime CompletionDate { get; set; }
         public ProjectStatus Status { get; set; }
         public int Priority { get; set; }
+        public List<TaskVM> Tasks { get; set; }
     }
 }

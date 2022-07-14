@@ -15,6 +15,5 @@ namespace DataAccessLayer.Interfaces
         Task UpdateProjectAsync(int projectId, ProjectDto project);
         Task DeleteProjectAsync(int projectId);
         IEnumerable<ProjectDto> GetFilter(ProjectFilters search = null);
-
     }
 }

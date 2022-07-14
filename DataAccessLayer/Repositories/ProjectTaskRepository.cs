@@ -60,7 +60,11 @@ namespace DataAccessLayer.Repositories
             }
             else
                 throw new Exception($"Project task with Id: {projectTaskId} doesn't exist!");
-        } 
-        
+        }
+
+        public List<ProjectTaskDto> GetListProjectTasks(int projectId)
+        {
+            return _context.ProjectTasks.Where(t => t.ProjectId == projectId).ToList();
+        }
     }
 }

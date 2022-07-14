@@ -13,6 +13,7 @@ namespace BusinessLogicLayer.Profiles
         {
             CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<ProjectTask, ProjectTaskDto>().ReverseMap();
+            CreateMap<TaskVM, ProjectTaskDto>().ReverseMap();
         }
     }
 }

@@ -85,6 +85,5 @@ namespace Web_API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }

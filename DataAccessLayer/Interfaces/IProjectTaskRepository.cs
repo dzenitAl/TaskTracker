@@ -13,5 +13,6 @@ namespace DataAccessLayer.Interfaces
         Task<IEnumerable<ProjectTaskDto>> GetAllProjectTasksAsync();
         Task UpdateProjectTaskAsync(int projectTaskId, ProjectTaskDto projectTask);
         Task DeleteProjectTaskAsync(int projectTaskId);
+        List<ProjectTaskDto> GetListProjectTasks(int projectId);
     }
 }

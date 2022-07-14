@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DataAccessLayer.EF;
 using DataAccessLayer.Interfaces;
 using DataAccessLayer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 using BusinessLogicLayer.Interfaces;
@@ -35,6 +28,9 @@ namespace Web_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+           
+            services.AddControllers().AddNewtonsoftJson(x =>
+             x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddDbContext<TaskTrackerDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -52,7 +48,6 @@ namespace Web_API
 
             services.AddAutoMapper(typeof(TaskTrackerProfiles));
 
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

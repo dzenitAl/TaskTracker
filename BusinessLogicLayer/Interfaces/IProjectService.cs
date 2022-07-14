@@ -13,5 +13,6 @@ namespace BusinessLogicLayer.Interfaces
         Task UpdateProjectAsync(int projectId, Project project);
         Task DeleteProjectAsync(int projectId);
         IEnumerable<Project> GetFilter(ProjectFilters search = null);
+        Task<ProjectVM> GetTasksOfProjectAsync(int projectId);
     }
 }
