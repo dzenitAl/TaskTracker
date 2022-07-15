@@ -18,7 +18,6 @@ namespace TaskTrackerUnitTests
         private readonly Mock<IMapper> _mapper;
         private readonly ProjectTaskService _projectTaskServiceTest;
 
-
         public ProjectTaskServiceTest()
         {
             projectTaskRepository = new Mock<IProjectTaskRepository>();
@@ -62,43 +61,30 @@ namespace TaskTrackerUnitTests
         }
 
         [Fact]
-        public async void Task_Add_NullProjectTask_Return_ThrowException()
+        public async void Task_Add_NullProjectTask_Return_ThrowExceptionMessage()
         {
             var newProjectTask = new ProjectTask() { };
-
             var newProjectTaskDto = new ProjectTaskDto() { };
 
             newProjectTask = null;
             newProjectTaskDto = null;
 
-
             _mapper.Setup(m => m.Map<ProjectTask>(It.IsAny<ProjectTaskDto>())).Returns(newProjectTask);
+            projectTaskRepository.Setup(x => x.AddProjectTaskAsync(newProjectTaskDto)).ThrowsAsync(new Exception("Project task not found!"));
 
-            try
-            {
-                await _projectTaskServiceTest.AddProjectTaskAsync(newProjectTask);
-            }
-            catch (Exception ex)
-            {
-                Assert.False(false, ex.Message);
-            }
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectTaskServiceTest.AddProjectTaskAsync(newProjectTask));
+
+            Assert.Equal("Project task not found!", exceptionThrown.Message);
         }
        
         [Fact]
-        public async void Task_GetAllProjectTasks_EmptyDB_Return_ThrowException()
+        public async void Task_GetAllProjectTasks_EmptyDB_Return_ThrowExceptionMessage()
         {
-            var projectTasksList = new List<ProjectTaskDto> { };
+            projectTaskRepository.Setup(x => x.GetAllProjectTasksAsync()).ThrowsAsync(new Exception("No Project Tasks in the database!"));
 
-            projectTaskRepository.Setup(x => x.GetAllProjectTasksAsync()).ReturnsAsync(projectTasksList);
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectTaskServiceTest.GetAllProjectTasksAsync());
 
-            try
-            {
-                await _projectTaskServiceTest.GetAllProjectTasksAsync();
-            }
-            catch (Exception ex)
-            {
-                Assert.False(false, ex.Message);
-            }
+            Assert.Equal("No Project Tasks in the database!", exceptionThrown.Message);
         }
 
         [Fact]
@@ -116,6 +102,5 @@ namespace TaskTrackerUnitTests
 
             Assert.Equal(2, projectTasks.Count());
         }
-
     }
 }

@@ -22,7 +22,6 @@ namespace TaskTrackerUnitTests
         private readonly Mock<IProjectTaskRepository> projectTaskRepository;
         private readonly Mock<IMapper> _mapper;
         private readonly ProjectService _projectServiceTest;
-       
 
         public ProjectServiceTest()
         {
@@ -68,25 +67,20 @@ namespace TaskTrackerUnitTests
         }
 
         [Fact]
-        public async void Task_Add_NullProject_Return_ThrowException()
+        public async void Task_Add_NullProject_Return_ThrowExceptionMessage()
         {
             var newProject = new Project() { };
-
             var newProjectDto = new ProjectDto() { };
                 
             newProject = null;
             newProjectDto = null;
 
             _mapper.Setup(m => m.Map<Project>(It.IsAny<ProjectDto>())).Returns(newProject);
+            projectRepository.Setup(x => x.AddProjectAsync(newProjectDto)).ThrowsAsync(new Exception("Project not found!"));
 
-            try
-            {
-                await _projectServiceTest.AddProjectAsync(newProject);
-            }
-            catch (Exception ex)
-            {
-                Assert.False(false, ex.Message);
-            }
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectServiceTest.AddProjectAsync(newProject));
+
+            Assert.Equal("Project not found!", exceptionThrown.Message);
         }
 
         [Fact]
@@ -106,22 +100,15 @@ namespace TaskTrackerUnitTests
         }
 
         [Fact]
-        public async void Task_GetAllProjects_EmptyDB_Return_ThrowException()
+        public async void Task_GetAllProjects_EmptyDB_Return_ThrowExceptionMessage()
         {
             var projectsList = new List<ProjectDto> {  };
 
-            projectRepository.Setup(x => x.GetAllProjectsAsync()).ReturnsAsync(projectsList);
+            projectRepository.Setup(x => x.GetAllProjectsAsync()).ThrowsAsync(new Exception("No Projects in the database!"));
 
-            try
-            {
-                await _projectServiceTest.GetAllProjectsAsync();
-            }
-            catch (Exception ex)
-            {
-                Assert.False(false, ex.Message);
-            }
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectServiceTest.GetAllProjectsAsync());
+
+            Assert.Equal("No Projects in the database!", exceptionThrown.Message);
         }
-       
     }
-
 }
