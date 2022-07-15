@@ -7,7 +7,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace TaskTrackerUnitTests
@@ -101,6 +100,36 @@ namespace TaskTrackerUnitTests
             var projectTasks = await _projectTaskServiceTest.GetAllProjectTasksAsync();
 
             Assert.Equal(2, projectTasks.Count());
+        }
+
+        [Theory]
+        [InlineData(1)]
+        public async void Task_GetProjectTaskId_Return_OkResult(int projectTaskId)
+        {
+            var firstProjectTaskDto = new ProjectTaskDto { Id = 1, Name = "Project Task 1", Description = "Description for New Project Task 1", Priority = 1, Status = DataAccessLayer.Enums.TaskStatus.ToDo, ProjectId = 1 };
+
+            projectTaskRepository.Setup(x => x.GetProjectTaskAsync(firstProjectTaskDto.Id)).ReturnsAsync(firstProjectTaskDto);
+
+            _mapper.Setup(m => m.Map<ProjectTaskDto>(It.IsAny<ProjectTask>())).Returns(firstProjectTaskDto);
+
+            var project = await _projectTaskServiceTest.GetProjectTaskAsync(firstProjectTaskDto.Id);
+
+            Assert.Equal(firstProjectTaskDto.Id, projectTaskId);
+        }
+
+        [Theory]
+        [InlineData(11)]
+        public async void Task_GetProjectTaskId_Return_ThrowExceptionMessage(int projectTaskId)
+        {
+            var firstProjectTaskDto = new ProjectTaskDto { Id = 1, Name = "Project Task 1", Description = "Description for New Project Task 1", Priority = 1, Status = DataAccessLayer.Enums.TaskStatus.ToDo, ProjectId = 1 };
+
+            projectTaskRepository.Setup(x => x.GetProjectTaskAsync(firstProjectTaskDto.Id)).ThrowsAsync(new Exception($"No Project Task with Id: {projectTaskId} in the database!"));
+
+            _mapper.Setup(m => m.Map<ProjectTaskDto>(It.IsAny<ProjectTask>())).Returns(firstProjectTaskDto);
+
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectTaskServiceTest.GetProjectTaskAsync(firstProjectTaskDto.Id));
+
+            Assert.Equal($"No Project Task with Id: {projectTaskId} in the database!", exceptionThrown.Message);
         }
     }
 }

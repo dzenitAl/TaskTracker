@@ -3,11 +3,6 @@ using DataAccessLayer.Interfaces;
 using Xunit;
 using Moq;
 using AutoMapper;
-using BusinessLogicLayer.Interfaces;
-using DataAccessLayer.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.InMemory;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using BusinessLogicLayer.Entities;
 using System;
 using DataAccessLayer.Models;
@@ -109,6 +104,37 @@ namespace TaskTrackerUnitTests
             var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectServiceTest.GetAllProjectsAsync());
 
             Assert.Equal("No Projects in the database!", exceptionThrown.Message);
+        }
+
+
+        [Theory]
+        [InlineData(1)]
+        public async void Task_GetProjectId_Return_OkResult(int projectId)
+        {
+            var firstProjectDto = new ProjectDto { Id = 1, Name = "Project 1", StartDate = DateTime.Now, CompletionDate = DateTime.Now, Priority = 1, Status = DataAccessLayer.Enums.ProjectStatus.NotStarted };
+
+            projectRepository.Setup(x => x.GetProjectAsync(firstProjectDto.Id)).ReturnsAsync(firstProjectDto);
+
+            _mapper.Setup(m => m.Map<ProjectDto>(It.IsAny<Project>())).Returns(firstProjectDto);
+
+            var project = await _projectServiceTest.GetProjectAsync(firstProjectDto.Id);
+
+            Assert.Equal(firstProjectDto.Id, projectId);
+        }
+
+        [Theory]
+        [InlineData(11)]
+        public async void Task_GetProjectId_Return_ThrowExceptionMessage(int projectId)
+        {
+            var firstProjectDto = new ProjectDto { Id = 1, Name = "Project 1", StartDate = DateTime.Now, CompletionDate = DateTime.Now, Priority = 1, Status = DataAccessLayer.Enums.ProjectStatus.NotStarted };
+
+            projectRepository.Setup(x => x.GetProjectAsync(firstProjectDto.Id)).ThrowsAsync(new Exception($"No Project with Id: {projectId} in the database!"));
+
+            _mapper.Setup(m => m.Map<ProjectDto>(It.IsAny<Project>())).Returns(firstProjectDto);
+
+            var exceptionThrown = await Assert.ThrowsAsync<Exception>(async () => await _projectServiceTest.GetProjectAsync(firstProjectDto.Id));
+
+            Assert.Equal($"No Project with Id: {projectId} in the database!", exceptionThrown.Message);
         }
     }
 }

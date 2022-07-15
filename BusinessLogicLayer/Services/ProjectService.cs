@@ -64,7 +64,7 @@ namespace BusinessLogicLayer.Services
         public async Task UpdateProjectAsync(int projectId, Project project)
         {
             if (project == null)
-                throw new Exception("Project not found!");
+                throw new Exception("Project must be required!");
             
             var newProject = _mapper.Map<ProjectDto>(project);
             
@@ -98,7 +98,7 @@ namespace BusinessLogicLayer.Services
                 CompletionDate = project.CompletionDate,
                 Priority = project.Priority,
                 Status = project.Status,
-                Tasks = _mapper.Map<List<TaskVM>>(_projectTaskRepository.GetListProjectTasks(projectId))
+                Tasks = _mapper.Map<List<TaskVM>>(await _projectTaskRepository.GetListProjectTasksAsync(projectId))
             };
 
             return projectListTask;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BusinessLogicLayer.Entities;
 using BusinessLogicLayer.Interfaces;
@@ -38,7 +36,7 @@ namespace Web_API.Controllers
         {
             try
             {
-                return  await _projectService.GetProjectAsync(id);
+                return  Ok(await _projectService.GetProjectAsync(id));
             }
             catch (Exception ex)
             {
@@ -51,7 +49,7 @@ namespace Web_API.Controllers
         {
             try
             {
-                return await _projectService.AddProjectAsync(project);
+                return Created("api/Project/Add", await _projectService.AddProjectAsync(project));
             }
             catch (Exception ex)
             {
@@ -65,7 +63,7 @@ namespace Web_API.Controllers
             try
             {
                 await _projectService.DeleteProjectAsync(id);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -101,7 +99,6 @@ namespace Web_API.Controllers
         }
 
         [HttpGet("GetTasksOfProject/{id}")]
-
         public async Task<ActionResult<IEnumerable<ProjectTask>>> GetTasksOfProjectAsync(int id)
         {
             try

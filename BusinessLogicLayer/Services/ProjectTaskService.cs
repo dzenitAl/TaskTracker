@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.Entities;
 using BusinessLogicLayer.Interfaces;
-using DataAccessLayer.EF;
 using DataAccessLayer.Interfaces;
 using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
@@ -26,7 +24,7 @@ namespace BusinessLogicLayer.Services
         public async Task<ProjectTask> AddProjectTaskAsync(ProjectTask projectTask)
         {
             if (projectTask == null)
-                throw new Exception("Project task not found!");
+                throw new Exception("Project task must be required!");
 
             var newProjectTask = _mapper.Map<ProjectTaskDto>(projectTask);
 
